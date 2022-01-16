@@ -1,0 +1,4 @@
+apiVersion: v2
+name: codewizard-helm-util
+type: application
+version: 0.1.0

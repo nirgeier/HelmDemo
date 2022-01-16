@@ -1,0 +1,9 @@
+replicaCount: 2
+
+namespace: codewizard
+
+image:
+  repository: alpine
+  pullPolicy: IfNotPresent
+  tag: ""
+

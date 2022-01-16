@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+  annotations:
+    app.kubernetes.io/managed-by: Helm
+    meta.helm.sh/release-name: {{ .Chart.Name }}
+    meta.helm.sh/release-namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - sleep
+            - "1000000"
+          volumeMounts:
+            - name: helm-cert
+              mountPath: /helm/
+            - name: helm-folder
+              mountPath: /data
+          lifecycle:
+            postStart:
+              exec:
+                command: ["sh", "-c", "echo 'Helm1: true' > /data/cert.flag"]              
+      volumes:
+        - name: helm-cert
+          secret:
+            secretName: helm-secret
+        - name: helm-folder
+          persistentVolumeClaim:
+            claimName: helm-pv-claim
